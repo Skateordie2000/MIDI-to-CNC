@@ -24,6 +24,10 @@
 # Further hacked fully into 3 dimensions and generalised
 # for multiple CNC machines by Michael Thomson
 # <mike at m-thomson dot net>
+#
+# Hacked without mercy by Rickard Dahlstrand during art hack day 
+# Stockholm 2013 to support Lulzbot and printing musical Patterns
+# I'm sorry.. <rd at tilde dot se> 
 # 
 ##################################
 #
@@ -54,6 +58,15 @@ machines_dict = dict( {
             20.000, 20.000, 10.000,  # Safe envelope maximum for X, Y, Z
             'XYZ'                    # Default axes and the order for playing
         ],      
+
+        'lulzbot':[
+            'metric',
+#            13, 13, 120.0,
+            26, 26, 120.0,
+            0.000, 0.000, 0.000,
+            120.000, 120.000, 10.000,
+            'XYZ'
+        ],
 
         'thingomatic':[
             'metric',
@@ -191,7 +204,7 @@ machines = parser.add_argument_group('Machine settings')
 
 machines.add_argument(
     '-machine', '--machine',
-    default = 'cupcake',
+    default = 'lulzbot',
     choices = sorted(machines_dict),
     help    = 'sets everything up appropriately for predefined machines, or flags use of custom settings.'
 )
@@ -307,6 +320,8 @@ if args.machine == 'shapercube':
     print "Machine type:\n    Shapercube"
 elif args.machine == 'ultimaker':
     print "Machine type:\n    Ultimaker"
+elif args.machine == 'lulzbot':
+    print "Machine type:\n    Lulzbot"
 elif args.machine == 'thingomatic':
     print "Machine type:\n    Makerbot Thing-O-Matic"
 elif args.machine == 'custom':
@@ -341,6 +356,8 @@ def main(argv):
     x=0.0
     y=0.0
     z=0.0
+    newz=0.6  # STARTZZ
+    setznexttime=0
 
     x_dir=1.0;
     y_dir=1.0;
@@ -435,9 +452,14 @@ def main(argv):
     else:
         print "\nWARNING: Gcode metric/imperial setting undefined!\n"
 
+         
+    args.outfile.write ("G28   ; home all axes \n")  
+#    args.outfile.write ("G28 X0  ; home X axis   \n")  
+#    args.outfile.write ("G28 Y0  ; home Y axis   \n")  
     args.outfile.write ("G90 (Absolute posiitioning)\n")
-    args.outfile.write ("G92 X0 Y0 Z0 (set origin to current position)\n")
-    args.outfile.write ("G0 X0 Y0 Z0 F2000.0 (Pointless move to origin to reset feed rate to a sane value)\n")
+    
+    args.outfile.write ("G92 X0 Y0 Z0 E0 (set origin to current position)\n")
+    args.outfile.write ("G0 X0 Y0 Z0 E0 F2000.0 (Pointless move to origin to reset feed rate to a sane value)\n")
 
     # Handle the prefix Gcode, if present
     if args.prefix != None:
@@ -513,19 +535,38 @@ def main(argv):
                 #
                 if reached_limit( x, distance_xyz[0], x_dir, args.safemin[0], args.safemax[0] ):
                     x_dir = x_dir * -1
+                    if setznexttime > 0:
+                        newz = newz + 0.02
+                        setznexttime = 0                        
+                    else:    
+                        setznexttime = 1
                 x = (x + (distance_xyz[0] * x_dir))
                
                 if reached_limit( y, distance_xyz[1], y_dir, args.safemin[1], args.safemax[1] ):
                     y_dir = y_dir * -1
+                    if setznexttime > 0:
+                        newz = newz + 0.02
+                        setznexttime = 0                        
+                    else:    
+                        setznexttime = 1
                 y = (y + (distance_xyz[1] * y_dir))
                
-                if reached_limit( z, distance_xyz[2], z_dir, args.safemin[2], args.safemax[2] ):
-                    z_dir = z_dir * -1
-                z = (z + (distance_xyz[2] * z_dir))
-               
+#               if reached_limit( z, distance_xyz[2], z_dir, args.safemin[2], args.safemax[2] ):
+#                    z_dir = z_dir * -1
+
+
+                if distance_xyz[2] > 0.5:  # Limit the feedrate for the extruder..
+                    z = (z + 0.5 * z_dir)
+                elif distance_xyz[2] < 0.1:
+                    z = (z + 0.1 * z_dir)                
+                else:
+                    z = (z + (distance_xyz[2] * z_dir))
+                    
                 if args.verbose:
-                    print "G01 X%.10f Y%.10f Z%.10f F%.10f\n" % (x, y, z, combined_feedrate)
-                args.outfile.write("G01 X%.10f Y%.10f Z%.10f F%.10f\n" % (x, y, z, combined_feedrate))
+#                    print "G01 X%.10f Y%.10f Z%.10f F%.10f \n" % (x, y, z, combined_feedrate)
+#                args.outfile.write("G01 X%.10f Y%.10f Z%.10f F%.10f\n" % (x, y, z, combined_feedrate))
+                    print "G01 X%.10f Y%.10f E%.10f Z%.10f F%.10f \n" % (x, y, z, newz, combined_feedrate)
+                args.outfile.write("G01 X%.10f Y%.10f E%.10f Z%.10f F%.10f\n" % (x, y, z, newz, combined_feedrate))
 
             else:
                 # Handle 'rests' in addition to notes.

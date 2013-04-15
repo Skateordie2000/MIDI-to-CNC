@@ -1,71 +1,32 @@
-THIS PROGRAM COMES WITH NO WARRANTY
-PLEASE KEEP AN EYE ON YOUR MACHINE AS THE
-GENERATED CODE MAY BRING YOUR BUILD PLATFORM OFF LIMITS
+3D Printed Music, Rickard Dahlstrand, <rd at tilde dot se>
 
-usage: mid2cnc.py [-h] [-infile [INFILE]] [-channels N [N ...]]
-                  [-outfile [OUTFILE]]
-                  [-machine {cupcake,custom,shapercube,thingomatic,ultimaker}]
-                  [-units {imperial,metric}] [-ppu XXX.XX YYY.YY ZZZ.ZZ]
-                  [-safemin XXX.XX YYY.YY ZZZ.ZZ]
-                  [-safemax XXX.XX YYY.YY ZZZ.ZZ] [-prefix [PRE_FILE]]
-                  [-postfix [POST_FILE]] [-axes XYZ] [-verbose]
+NO PRINTER WHERE HARMED DURING THE MAKING OF THIS HACK!
+(however this doesn't mean that yours won't be, use at own risk)
 
-Utility to process a Standard MIDI File (*.SMF/*.mid) to "play" it on up to 3
-axes of a CNC machine.
+A video of the printer playing Carmen https://vimeo.com/63997136
+A few pictures from the exibit 
 
-optional arguments:
-  -h, --help            show this help message and exit
+This code was hacked witout mercy during the art hack day in Stockholm 2013.
+Using a Lulzbot 3D-printer I tried to visulize different classical musical pieces.
 
-Input settings:
-  -infile [INFILE], --infile [INFILE]
-                        the input MIDI filename (default: ./input.mid)
-  -channels N [N ...], --channels N [N ...]
-                        list of MIDI channels you want to scan for event data
-                        (default: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-                        13, 14, 15])
-  -outfile [OUTFILE], --outfile [OUTFILE]
-                        the output Gcode filename (default: ./output.gcode)
+The project explores the alternative uses of 3D-printers. It's being used to create
+unique art by printing classical pieces of music while at the same time acting as 
+an instrument and performing the music itself.
 
-Machine settings:
-  -machine {cupcake,custom,shapercube,thingomatic,ultimaker}, --machine {cupcake,custom,shapercube,thingomatic,ultimaker}
-                        sets everything up appropriately for predefined
-                        machines, or flags use of custom settings. (default:
-                        cupcake)
+The stepper motors controlling the movement can be run at different speeds,
+the speed decides the pitch of the sound and makes it possible for the motors to make music.
 
-Customised settings:
-  -units {imperial,metric}, --units {imperial,metric}
-                        set the measurement and feed rate units to your
-                        preferred scheme. (default: metric)
-  -ppu XXX.XX YYY.YY ZZZ.ZZ, --ppu XXX.XX YYY.YY ZZZ.ZZ
-                        set arbitrary pulses-per-unit (ppu) for each of the X,
-                        Y and Z axes (default: None)
-  -safemin XXX.XX YYY.YY ZZZ.ZZ, --safemin XXX.XX YYY.YY ZZZ.ZZ
-                        set minimum edge of the safe envelope for each of the
-                        X, Y and Z axes (default: None)
-  -safemax XXX.XX YYY.YY ZZZ.ZZ, --safemax XXX.XX YYY.YY ZZZ.ZZ
-                        set maximum edge of the safe envelope for each of the
-                        X, Y and Z axes (default: None)
-  -prefix [PRE_FILE], --prefix [PRE_FILE]
-                        A file containing Gcode to set your machine to a known
-                        state before the MIDI is played e.g. homing the axes
-                        if supported or required. (default: None)
-  -postfix [POST_FILE], --postfix [POST_FILE]
-                        A file containing Gcode to return your machine to a
-                        known state after the MIDI is played e.g. homing the
-                        axes if supported or required. (default: None)
+Three motors each represent one of the tracks and their movement makes an unique pattern.
+The two motors controlling the Z-axis moves only slightly to increase
+the height. Microphones on the motors picks up the sound and amplifies it.
 
-Output settings:
-  -axes XYZ, --axes XYZ
-                        ordered list of the axes you wish to "play" the MIDI
-                        data on. e.g. "X", "ZY", "YZX" (default: XYZ)
-  -verbose, --verbose   print verbose output to the terminal (default: False)
+People have been playing music on their 3d-printers for a long time, but I wanted to see
+what music looked like 3D-printed. You'll be amazed at the results.
 
-=================================================================
-Please join our Mailinglist at:
-http://groups.google.com/group/makerbotmusic
-
-and post your working tunes to the MakerBot Wiki:
-http://wiki.makerbot.com/makerbot-music
-=================================================================
-
-Have fun and set all axes to MUSICCCCC!
+The music I seleced for this project where:
+1. Williams - Star Wars: Imperial March
+2. Rossini - William Tell Overture
+3. Beethoven - 5th Symphony Part 1
+4. Mozart - Serenade No.13 in G for strings Eine Kleine Nachtmusik (K.525)
+5. Strauss - Blue Danube
+6. Bizet - Carmen: Habanera
